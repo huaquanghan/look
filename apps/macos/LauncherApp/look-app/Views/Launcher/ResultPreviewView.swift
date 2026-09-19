@@ -220,6 +220,48 @@ struct ResultPreviewView: View {
         return parts.isEmpty ? nil : parts.joined(separator: "  ·  ")
     }
 
+    /// The synthesized "Empty Trash" row. Like the link rows, there is no file
+    /// behind it, so it takes the same centered hero shape rather than the
+    /// bundle panel, which would read its empty path and badge it "App".
+    private var isEmptyTrashResult: Bool {
+        if case .emptyTrash = SyntheticRow.classify(resultID: result.id) { return true }
+        return false
+    }
+
+    private var emptyTrashPreview: some View {
+        VStack(spacing: 14) {
+            Spacer(minLength: 0)
+
+            Image(nsImage: NSImage(systemSymbolName: "trash", accessibilityDescription: nil)
+                ?? NSWorkspace.shared.icon(for: .plainText))
+                .resizable()
+                .scaledToFit()
+                .frame(width: 52, height: 52)
+                .foregroundStyle(themeStore.accentColor())
+
+            Text(result.title)
+                .font(themeStore.uiFont(size: CGFloat(themeStore.settings.fontSize + 5), weight: .bold))
+                .foregroundStyle(themeStore.fontColor())
+
+            VStack(alignment: .leading, spacing: 8) {
+                hintRow(key: "↵", text: "Empty the Trash")
+                hintRow(key: "Esc", text: "Dismiss")
+            }
+            .padding(.top, 6)
+
+            // Says what Enter costs before it is pressed; the confirmation that
+            // follows repeats it with the count.
+            Text("Deletes its contents permanently")
+                .font(themeStore.uiFont(size: CGFloat(themeStore.settings.fontSize - 2), weight: .regular))
+                .foregroundStyle(themeStore.secondaryTextColor())
+                .multilineTextAlignment(.center)
+
+            Spacer(minLength: 0)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     private func linkPreview(_ url: String) -> some View {
         VStack(spacing: 14) {
             Spacer(minLength: 0)
@@ -398,6 +440,8 @@ struct ResultPreviewView: View {
             aiActionPreview(toolID)
         } else if let linkURL {
             linkPreview(linkURL)
+        } else if isEmptyTrashResult {
+            emptyTrashPreview
         } else {
         let info = bundleInfo
 

@@ -277,6 +277,13 @@ enum AppConstants {
             }
         }
 
+        /// The synthesized "Empty Trash" row for `empty`, `trash`, `empty trash`, `clean trash`.
+        /// Enter enters the same confirm flow as Cmd+D on the Trash pin.
+        enum EmptyTrash {
+            static let resultID = "emptytrash:"
+            static let subtitle = "Asks to confirm  •  Enter to empty"
+        }
+
         enum Calc {
             static let resultIDPrefix = "calc:"
             static let enterToCopyHint = "Enter to copy"

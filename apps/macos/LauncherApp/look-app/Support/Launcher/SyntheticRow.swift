@@ -15,6 +15,8 @@ enum SyntheticRow {
     case meeting(url: String)
     /// "Call <name>" for a `call` query (Enter opens FaceTime or Messages).
     case call(url: String)
+    /// "Empty Trash" for an `empty` / `trash` query (Enter opens the confirm prompt).
+    case emptyTrash
 
     static func classify(resultID: String) -> SyntheticRow? {
         if let toolID = AppConstants.Launcher.AIAction.toolID(fromResultID: resultID) {
@@ -40,6 +42,9 @@ enum SyntheticRow {
         }
         if let url = AppConstants.Launcher.Call.url(fromResultID: resultID) {
             return .call(url: url)
+        }
+        if resultID == AppConstants.Launcher.EmptyTrash.resultID {
+            return .emptyTrash
         }
         return nil
     }

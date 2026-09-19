@@ -75,6 +75,22 @@ enum DeleteTargetLogic {
         normalize(path) == normalize(homeDirectory) + "/.Trash"
     }
 
+    /// True for the queries that pin the "Empty Trash" row to the top: the
+    /// whole word `empty` or `trash`, or `empty`/`clean` followed by the start of
+    /// `trash` (`empty tr`, `clean trash`). Whole words only for the lone-word
+    /// case, so `clean` or `emp` alone never outrank an app like CleanMyMac.
+    static func isEmptyTrashQuery(_ query: String) -> Bool {
+        let words = query.lowercased().split(whereSeparator: \.isWhitespace).map(String.init)
+        switch words.count {
+        case 1:
+            return words[0] == "empty" || words[0] == "trash"
+        case 2:
+            return (words[0] == "empty" || words[0] == "clean") && "trash".hasPrefix(words[1])
+        default:
+            return false
+        }
+    }
+
     /// Detail line for the Empty Trash confirmation, stressing permanence.
     static func emptyTrashDetail(itemCount: Int) -> String {
         "\(itemCount) item\(itemCount == 1 ? "" : "s") - deleted permanently"

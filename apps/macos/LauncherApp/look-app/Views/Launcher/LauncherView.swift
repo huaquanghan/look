@@ -553,10 +553,25 @@ struct LauncherView: View {
         // whose name happens to contain the word.
         let withMeeting = meetingResult.map { [$0] + withCalc } ?? withCalc
         let withCall = callResults.isEmpty ? withMeeting : callResults + withMeeting
+        let withTrash = emptyTrashResult.map { [$0] + withCall } ?? withCall
         // The planner-proposed action row outranks everything: the user typed
         // an instruction, not a search.
-        guard let actionRow = mainBarActionRow else { return withCall }
-        return [actionRow] + withCall
+        guard let actionRow = mainBarActionRow else { return withTrash }
+        return [actionRow] + withTrash
+    }
+
+    /// "Empty Trash" for `empty` / `trash` and phrases like `empty trash`. Enter only opens the
+    /// confirm prompt (see `requestEmptyTrash`).
+    var emptyTrashResult: LauncherResult? {
+        guard allowsSuggestionRows, DeleteTargetLogic.isEmptyTrashQuery(query) else { return nil }
+        return LauncherResult(
+            id: AppConstants.Launcher.EmptyTrash.resultID,
+            kind: .app,
+            title: "Empty Trash",
+            subtitle: AppConstants.Launcher.EmptyTrash.subtitle,
+            path: "",
+            score: .max
+        )
     }
 
     var mainBarActionRow: LauncherResult? {
