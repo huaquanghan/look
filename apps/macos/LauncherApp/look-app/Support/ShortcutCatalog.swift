@@ -102,6 +102,7 @@ enum ShortcutCatalog {
 
         ShortcutGroup(title: "Clipboard history", topic: .main, entries: [
             ShortcutEntry("clipboard.copyBack", "Enter", "Copy selected history item back to clipboard"),
+            ShortcutEntry("clipboard.paste", "Cmd+I", "Paste selected history item into the app you came from (text or image)"),
             ShortcutEntry("clipboard.remove", "Cmd+D", "Remove selected clipboard item from Look history"),
         ]),
 
