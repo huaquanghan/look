@@ -32,7 +32,7 @@ brew install --cask kunkka19xx/tap/look
 
 On first launch, Look will index your apps, files, and folders in the background. You can start using it immediately - results appear as indexing completes.
 
-To bind `Cmd+Space` to Look, disable Spotlight's default shortcut: `System Settings > Keyboard > Keyboard Shortcuts > Spotlight`.
+To bind `Cmd+Space` to Look, disable Spotlight's default shortcut: `System Settings > Keyboard > Keyboard Shortcuts > Spotlight`. To keep Spotlight, set `launcher_hotkey` in `~/.look/config` to another shortcut (for example `launcher_hotkey=ctrl+space`) and reload with `Cmd+Shift+;`.
 
 ## Permissions
 
@@ -278,6 +278,7 @@ Clipboard mode (`c"`):
 
 - stores recent text clips for the running app session (history size is configurable via `clipboard_history_limit`, see File-only settings below),
 - `Enter` on a clipboard row copies that content back to clipboard,
+- `Cmd+I` (macOS) pastes the selected row straight into the app you came from, text clips and image clips (`ci"`) alike: Look borrows the pasteboard for the paste and hands it straight back, so your own `Cmd+C` value survives and your next `Cmd+V` still pastes it (a clipboard over 20 MB is left as pasted, rather than held a second time in memory). It needs Look enabled under System Settings > Privacy & Security > Accessibility, and it cannot reach a secure input field (a password prompt, `sudo` in a terminal) - Look says so instead of pasting nothing,
 - `Cmd+D` (`Ctrl+D` on Linux/Windows) removes the selected row from Look's clipboard history.
 
 Translation mode (`t"`/`tw"`):
@@ -513,6 +514,7 @@ Runtime config file:
 - path: `~/.look/config`
 - optional override: `LOOK_CONFIG_PATH=/path/to/config`
 - reload after manual edits: `Cmd+Shift+;`
+- reload from a script: `lookapp reload-config` applies the file in the running Look without opening the window, so a script that rewrites the theme (for example to follow the wallpaper) takes effect immediately. If Look is not running it does nothing and exits 0.
 - reset to fresh defaults from UI: `Settings -> Advanced -> Create Fresh Config` (confirmation popup)
 
 NixOS / Home Manager users can manage the same file declaratively through the
@@ -560,13 +562,14 @@ Backend-related keys:
 - `lazy_indexing_enabled`
 - `skip_dir_names`
 - `alias_<keyword>` (for app + System Settings query aliases, for example `alias_note=Notion|Obsidian|Notes|Apple Notes|Bear|Logseq`)
-- `backend_log_level`, `launch_at_login`
+- `backend_log_level`, `launch_at_login`, `add_to_path` (Windows)
 
 File-only settings (no Settings UI):
 
 These keys have no control in the Settings screens. Edit `~/.look/config` directly, then reload with `Cmd+Shift+;` (macOS) or `Ctrl+Shift+;` (Linux/Windows), or restart Look. Out-of-range or unparseable values fall back to the listed default. More keys will be added here over time.
 
 - `clipboard_history_limit` (clipboard history size, range 10 to 100, default 10)
+- `launcher_hotkey` (global shortcut that shows and hides Look; modifiers `cmd`/`win`, `ctrl`, `alt`/`option`, `shift` plus one key: a letter, digit, `space`, `enter`, `tab`, `esc`, `f1`-`f20`, or a symbol like `` ` ``. Examples: `ctrl+space`, `alt+shift+space`, `f13`. Default `cmd+space` on macOS, `alt+space` on Windows and Linux. `none` stops Look registering any key, so you can bind `lookapp --toggle` in your desktop or a tool like skhd/AutoHotkey instead; Linux accepts only `none` and applies it on restart. An invalid value falls back to the default and the reload banner says why)
 - `query_retention_seconds` (how long the main query survives while Look is hidden, in seconds; the first open past it returns to the empty home screen; default 5, `0` clears on every hide, and any negative value keeps the query indefinitely)
 - `text_editor`, `code_editor`, `terminal`, `file_manager` (the tools `Cmd+E` / `Cmd+T` / `Cmd+F` act through, see [Preferred tools](#preferred-tools); undeclared means the system default)
 
@@ -648,6 +651,7 @@ Note: `Settings Blur` is stored as local app UI state (UserDefaults) and is not 
 - `Cmd+F`: reveal in Finder, or in the `file_manager` you declared
 - `Cmd+C`: copy selected file/folder
 - `Cmd+P` / `Cmd+Shift+P`: toggle pick / clear picked set
+- `Cmd+I` (macOS): paste the selected clipboard history item into the app you came from
 - `Cmd+D`: remove the selected clipboard history item; otherwise move selected file/folder (or picked items) to Trash, or empty the pinned Trash folder
 - `Cmd+Shift+,`: toggle settings panel
 - `Cmd+Shift+;` (macOS) / `Ctrl+Shift+;` (Linux, Windows): reload config, re-read your declared sources, and re-read `~/.look/super-actions.toml` so the strip can be arranged while you look at it
@@ -668,6 +672,8 @@ Note: `Settings Blur` is stored as local app UI state (UserDefaults) and is not 
 - confirm Spotlight's `Cmd+Space` is disabled or rebound (`System Settings > Keyboard > Keyboard Shortcuts > Spotlight`)
 - relaunch Look (`open "/Applications/Look.app"`) after changing the Spotlight binding
 - if you previously ran a dev/side-by-side build, make sure only one Look instance is running
+- if you changed `launcher_hotkey` to a shortcut, use that shortcut instead of `Cmd+Space`
+- if you set `launcher_hotkey=none`, use an external binding such as `lookapp --toggle`
 
 **The launcher opens behind another window.**
 
