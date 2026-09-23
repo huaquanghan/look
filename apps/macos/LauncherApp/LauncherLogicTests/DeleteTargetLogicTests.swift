@@ -151,6 +151,28 @@ final class DeleteTargetLogicTests: XCTestCase {
         XCTAssertTrue(isError)
     }
 
+    // MARK: - empty trash query
+
+    func testEmptyTrashQueryMatchesTheWordsAndPhrases() {
+        let queries = [
+            "empty", "trash", "  Empty ", "TRASH",
+            "empty trash", "clean trash", "  Empty   TRASH ", "empty t", "clean tr",
+        ]
+        for query in queries {
+            XCTAssertTrue(DeleteTargetLogic.isEmptyTrashQuery(query), query)
+        }
+    }
+
+    func testEmptyTrashQueryLeavesOrdinarySearchesAlone() {
+        let queries = [
+            "", "clean", "emp", "tra", "trashes", "empty trash can",
+            "clean trashed notes", "empty trashes", "empty x", "trash empty",
+        ]
+        for query in queries {
+            XCTAssertFalse(DeleteTargetLogic.isEmptyTrashQuery(query), query)
+        }
+    }
+
     func testResultMessagePartialFailure() {
         let (text, isError) = DeleteTargetLogic.resultMessage(
             trashedCount: 2,

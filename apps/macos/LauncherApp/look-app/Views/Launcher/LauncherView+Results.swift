@@ -54,6 +54,11 @@ extension LauncherView {
             openURLScheme(url)
             hideLauncherWindow(restorePreviousApp: false)
             return
+        case .emptyTrash:
+            // Permanent, so this only opens the confirm prompt; the launcher
+            // stays up until the user answers it.
+            requestEmptyTrash()
+            return
         case nil:
             break
         }
@@ -626,21 +631,7 @@ extension LauncherView {
            let selected = displayedResults.first(where: { $0.id == selectedResultID }),
            selected.kind == .folder,
            DeleteTargetLogic.isTrashPath(selected.path, homeDirectory: NSHomeDirectory()) {
-            // Count comes from Finder (TCC blocks reading ~/.Trash directly);
-            // this is the right moment to prompt for Automation permission.
-            guard let count = EmptyTrashCommand.itemCount() else {
-                showBanner(
-                    "Allow Look to control Finder in System Settings ▸ Privacy ▸ Automation to empty the Trash",
-                    style: .error,
-                    duration: 2.8
-                )
-                return
-            }
-            guard count > 0 else {
-                showBanner("Trash is already empty", style: .info, duration: 1.2)
-                return
-            }
-            pendingEmptyTrashCount = count
+            requestEmptyTrash()
             return
         }
 
@@ -651,6 +642,27 @@ extension LauncherView {
         }
         // Recoverable - trash straight away, no confirmation.
         runDeleteCommand(targets: targets)
+    }
+
+    /// Starts the permanent Empty Trash flow: counts, then asks to confirm.
+    /// Shared by Cmd+D on the Trash pin and Enter on the "Empty Trash" row.
+    func requestEmptyTrash() {
+        guard isLauncherIdle, pendingEmptyTrashCount == nil, !isDeleteInFlight else { return }
+        // Count comes from Finder (TCC blocks reading ~/.Trash directly);
+        // this is the right moment to prompt for Automation permission.
+        guard let count = EmptyTrashCommand.itemCount() else {
+            showBanner(
+                "Allow Look to control Finder in System Settings ▸ Privacy ▸ Automation to empty the Trash",
+                style: .error,
+                duration: 2.8
+            )
+            return
+        }
+        guard count > 0 else {
+            showBanner("Trash is already empty", style: .info, duration: 1.2)
+            return
+        }
+        pendingEmptyTrashCount = count
     }
 
     /// Confirm/cancel only apply to the permanent Empty Trash prompt now.

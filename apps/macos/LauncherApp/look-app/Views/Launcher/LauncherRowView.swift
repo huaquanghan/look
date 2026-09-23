@@ -74,6 +74,11 @@ struct LauncherRowView: View {
                 NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
                     ?? NSWorkspace.shared.icon(for: .plainText)
             }
+        case .emptyTrash:
+            return RowIconCache.image(key: "symbol:trash") {
+                NSImage(systemSymbolName: "trash", accessibilityDescription: nil)
+                    ?? NSWorkspace.shared.icon(for: .plainText)
+            }
         case .prefixSuggestion, .webSuggestion:
             return RowIconCache.image(key: "symbol:magnifyingglass") {
                 NSImage(systemSymbolName: "magnifyingglass", accessibilityDescription: nil)
