@@ -28,6 +28,7 @@ final class SyntheticRowTests: XCTestCase {
             ),
             (AppConstants.Launcher.Call.resultID(url: "facetime-audio://+15551234567"), "call"),
             (AppConstants.Launcher.EmptyTrash.resultID, "emptyTrash"),
+            (AppConstants.Launcher.FontCache.resultID, "clearFontCache"),
         ]
         for (id, expected) in cases {
             XCTAssertEqual(name(of: SyntheticRow.classify(resultID: id)), expected, id)
@@ -52,6 +53,7 @@ final class SyntheticRowTests: XCTestCase {
         case .meeting: "meeting"
         case .call: "call"
         case .emptyTrash: "emptyTrash"
+        case .clearFontCache: "clearFontCache"
         case nil: "nil"
         }
     }

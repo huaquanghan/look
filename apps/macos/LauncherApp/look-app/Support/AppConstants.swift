@@ -284,6 +284,14 @@ enum AppConstants {
             static let subtitle = "Asks to confirm  •  Enter to empty"
         }
 
+        /// The synthesized "Clear Font Cache" row for `font cache`, `clear font
+        /// cache`, `reset fonts`, etc. Enter runs `atsutil databases -removeUser`
+        /// straight away - nothing is lost, so it skips the confirm prompt.
+        enum FontCache {
+            static let resultID = "fontcache:"
+            static let subtitle = "Enter to clear  •  Log out to rebuild"
+        }
+
         enum Calc {
             static let resultIDPrefix = "calc:"
             static let enterToCopyHint = "Enter to copy"

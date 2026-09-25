@@ -73,7 +73,9 @@ Useful actions:
 
 When at least one item is picked, the right panel switches to the **Picked** list - each row has an `X` to remove a single item, plus a **Clear all** button. File/folder copies (both `Cmd+C` and `Cmd+P`) are excluded from clipboard history.
 
-**Trash.** Type `empty` or `trash` (or `empty trash`, `clean trash`) and an **Empty Trash** row is first and selected; `Enter` on it starts the confirm prompt below. `trash` also pins the Trash quick folder just under it; `Enter` on that opens it in Finder, its preview shows the item count, and `Cmd+D` **empties** the Trash too. Emptying is permanent, so it asks you to confirm (`Y`/`Enter` to empty, `N`/`Esc` to cancel). Look empties the Trash through Finder, so the first time you do this macOS asks for permission to control Finder (see [Permissions](#permissions)).
+**Trash.** Type `empty` or `trash` (or `empty trash`, `clean trash`, `clear trash`, or a close typo like `tarsh`) and an **Empty Trash** row is first and selected; `Enter` on it starts the confirm prompt below. `trash` also pins the Trash quick folder just under it; `Enter` on that opens it in Finder, its preview shows the item count, and `Cmd+D` **empties** the Trash too. Emptying is permanent, so it asks you to confirm (`Y`/`Enter` to empty, `N`/`Esc` to cancel). Look empties the Trash through Finder, so the first time you do this macOS asks for permission to control Finder (see [Permissions](#permissions)).
+
+**Font cache.** Type `font cache` (or `clear font cache`, `reset fonts`, or a close typo) and a **Clear Font Cache** row is first and selected; `Enter` clears the current user's font cache right away via `atsutil databases -removeUser` - no confirmation, since nothing is lost and the cache rebuilds itself from the fonts on disk. Log out or restart to see the rebuild take effect. macOS only.
 
 ## Preferred tools
 

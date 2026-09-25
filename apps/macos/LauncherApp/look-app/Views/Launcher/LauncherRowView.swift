@@ -79,6 +79,11 @@ struct LauncherRowView: View {
                 NSImage(systemSymbolName: "trash", accessibilityDescription: nil)
                     ?? NSWorkspace.shared.icon(for: .plainText)
             }
+        case .clearFontCache:
+            return RowIconCache.image(key: "symbol:textformat") {
+                NSImage(systemSymbolName: "textformat", accessibilityDescription: nil)
+                    ?? NSWorkspace.shared.icon(for: .plainText)
+            }
         case .prefixSuggestion, .webSuggestion:
             return RowIconCache.image(key: "symbol:magnifyingglass") {
                 NSImage(systemSymbolName: "magnifyingglass", accessibilityDescription: nil)

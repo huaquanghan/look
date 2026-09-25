@@ -59,6 +59,11 @@ extension LauncherView {
             // stays up until the user answers it.
             requestEmptyTrash()
             return
+        case .clearFontCache:
+            // Nothing is lost - the cache rebuilds itself - so this runs
+            // straight away, no confirm prompt.
+            requestClearFontCache()
+            return
         case nil:
             break
         }
@@ -663,6 +668,24 @@ extension LauncherView {
             return
         }
         pendingEmptyTrashCount = count
+    }
+
+    /// Clears the ATS font cache for the current user. Nothing is lost - the
+    /// cache rebuilds itself from the fonts on disk - so unlike Empty Trash
+    /// this runs immediately, no confirm prompt.
+    func requestClearFontCache() {
+        guard isLauncherIdle, !isDeleteInFlight else { return }
+        isDeleteInFlight = true
+        FontCacheCommand.run { error in
+            MainActor.assumeIsolated {
+                isDeleteInFlight = false
+                if let error {
+                    showBanner(error, style: .error, duration: 2.6)
+                } else {
+                    showBanner("Cleared font cache - log out or restart to rebuild", style: .success, duration: 2.0)
+                }
+            }
+        }
     }
 
     /// Confirm/cancel only apply to the permanent Empty Trash prompt now.

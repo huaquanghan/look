@@ -554,21 +554,36 @@ struct LauncherView: View {
         let withMeeting = meetingResult.map { [$0] + withCalc } ?? withCalc
         let withCall = callResults.isEmpty ? withMeeting : callResults + withMeeting
         let withTrash = emptyTrashResult.map { [$0] + withCall } ?? withCall
+        let withFontCache = clearFontCacheResult.map { [$0] + withTrash } ?? withTrash
         // The planner-proposed action row outranks everything: the user typed
         // an instruction, not a search.
-        guard let actionRow = mainBarActionRow else { return withTrash }
-        return [actionRow] + withTrash
+        guard let actionRow = mainBarActionRow else { return withFontCache }
+        return [actionRow] + withFontCache
     }
 
     /// "Empty Trash" for `empty` / `trash` and phrases like `empty trash`. Enter only opens the
     /// confirm prompt (see `requestEmptyTrash`).
     var emptyTrashResult: LauncherResult? {
-        guard allowsSuggestionRows, DeleteTargetLogic.isEmptyTrashQuery(query) else { return nil }
+        guard allowsSuggestionRows, MaintenanceQuery.match(query) == .emptyTrash else { return nil }
         return LauncherResult(
             id: AppConstants.Launcher.EmptyTrash.resultID,
             kind: .app,
             title: "Empty Trash",
             subtitle: AppConstants.Launcher.EmptyTrash.subtitle,
+            path: "",
+            score: .max
+        )
+    }
+
+    /// "Clear Font Cache" for `font cache` and phrases like `clear font cache`,
+    /// `reset fonts`. Enter clears it straight away (see `requestClearFontCache`).
+    var clearFontCacheResult: LauncherResult? {
+        guard allowsSuggestionRows, MaintenanceQuery.match(query) == .clearFontCache else { return nil }
+        return LauncherResult(
+            id: AppConstants.Launcher.FontCache.resultID,
+            kind: .app,
+            title: "Clear Font Cache",
+            subtitle: AppConstants.Launcher.FontCache.subtitle,
             path: "",
             score: .max
         )

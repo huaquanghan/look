@@ -17,6 +17,8 @@ enum SyntheticRow {
     case call(url: String)
     /// "Empty Trash" for an `empty` / `trash` query (Enter opens the confirm prompt).
     case emptyTrash
+    /// "Clear Font Cache" for a `font cache` query (Enter clears it straight away).
+    case clearFontCache
 
     static func classify(resultID: String) -> SyntheticRow? {
         if let toolID = AppConstants.Launcher.AIAction.toolID(fromResultID: resultID) {
@@ -45,6 +47,9 @@ enum SyntheticRow {
         }
         if resultID == AppConstants.Launcher.EmptyTrash.resultID {
             return .emptyTrash
+        }
+        if resultID == AppConstants.Launcher.FontCache.resultID {
+            return .clearFontCache
         }
         return nil
     }

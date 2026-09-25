@@ -262,6 +262,45 @@ struct ResultPreviewView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    /// The synthesized "Clear Font Cache" row. Same hero shape as Empty Trash:
+    /// no file behind it, and Enter runs immediately (no confirm prompt).
+    private var isClearFontCacheResult: Bool {
+        if case .clearFontCache = SyntheticRow.classify(resultID: result.id) { return true }
+        return false
+    }
+
+    private var clearFontCachePreview: some View {
+        VStack(spacing: 14) {
+            Spacer(minLength: 0)
+
+            Image(nsImage: NSImage(systemSymbolName: "textformat", accessibilityDescription: nil)
+                ?? NSWorkspace.shared.icon(for: .plainText))
+                .resizable()
+                .scaledToFit()
+                .frame(width: 52, height: 52)
+                .foregroundStyle(themeStore.accentColor())
+
+            Text(result.title)
+                .font(themeStore.uiFont(size: CGFloat(themeStore.settings.fontSize + 5), weight: .bold))
+                .foregroundStyle(themeStore.fontColor())
+
+            VStack(alignment: .leading, spacing: 8) {
+                hintRow(key: "↵", text: "Clear the font cache")
+                hintRow(key: "Esc", text: "Dismiss")
+            }
+            .padding(.top, 6)
+
+            Text("Rebuilds itself - log out or restart to see it")
+                .font(themeStore.uiFont(size: CGFloat(themeStore.settings.fontSize - 2), weight: .regular))
+                .foregroundStyle(themeStore.secondaryTextColor())
+                .multilineTextAlignment(.center)
+
+            Spacer(minLength: 0)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
     private func linkPreview(_ url: String) -> some View {
         VStack(spacing: 14) {
             Spacer(minLength: 0)
@@ -442,6 +481,8 @@ struct ResultPreviewView: View {
             linkPreview(linkURL)
         } else if isEmptyTrashResult {
             emptyTrashPreview
+        } else if isClearFontCacheResult {
+            clearFontCachePreview
         } else {
         let info = bundleInfo
 
